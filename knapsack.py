@@ -8,33 +8,64 @@ def load_data(problem_name):
         return yaml.load(f)
 
 
-def get_sub_solution(data, start_point, max_weight):
+def get_sub_solution_recursive(data, start_point, max_weight, recorded_solutions):
+
+    solution_key = '%s-%s' % (start_point, max_weight)
+
+    try:
+        already_calculated_solution = recorded_solutions[solution_key]
+
+        print 'Reusing calculation', solution_key
+
+        return already_calculated_solution
+    except KeyError:
+        pass
 
     if max_weight == 0:
-        return 0
+        result = 0
+
+        recorded_solutions[solution_key] = result
+
+        return result
 
     if start_point == len(data['element_values']):
-        return 0
+        result = 0
+        recorded_solutions[solution_key] = result
+        return result
 
     element_weight = data['element_weights'][start_point]
     element_value = data['element_values'][start_point]
 
     if element_weight > max_weight:
+
         # não cabe na mochila
-        return get_sub_solution(data, start_point + 1, max_weight)
+
+        result = get_sub_solution_recursive(data, start_point + 1, max_weight, recorded_solutions)
+
+        recorded_solutions[solution_key] = result
+
+        return result
+
     else:
+
         # cabe na mochila
-        return max(
-            get_sub_solution(data, start_point + 1, max_weight - element_weight) + element_value,
-            get_sub_solution(data, start_point + 1, max_weight),
+
+        result = max(
+            get_sub_solution_recursive(data, start_point + 1, max_weight - element_weight, recorded_solutions) + element_value,
+            get_sub_solution_recursive(data, start_point + 1, max_weight, recorded_solutions),
         )
 
+        recorded_solutions[solution_key] = result
 
-def get_solution(problem_name):
+        return result
+
+
+def get_solution_recursive(problem_name):
 
     problem_data = load_data(problem_name)
 
-    return get_sub_solution(problem_data, 0, problem_data['max_weight'])
+    return get_sub_solution_recursive(problem_data, 0, problem_data['max_weight'], recorded_solutions={})
 
 
-print get_solution('basic.yml')
+print get_solution_recursive('basic.yml')
+print get_solution_recursive('bit_complex.yml')
