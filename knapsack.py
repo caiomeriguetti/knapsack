@@ -75,13 +75,13 @@ def get_solution_iter(problem_name):
 
     table = {}
 
-    def get_result(element_num, weight):
+    def get_result(el_num, weight):
 
-        table_key = '%s-%s' % (element_num, weight)
+        key = '%s-%s' % (el_num, weight)
 
-        return table[table_key]
+        return table[key]
 
-    for weight in range(0, max_weight+1):
+    for weight in range(0, max_weight + 1):
         for element_num in range(0, len(problem_data['element_values']) + 1):
 
             table_key = '%s-%s' % (element_num, weight)
@@ -95,7 +95,6 @@ def get_solution_iter(problem_name):
 
             if element_weight > weight:
                 # nao cabe na mochila
-
                 table[table_key] = get_result(element_num - 1, weight)
             else:
                 # cabe na mochila
@@ -108,8 +107,6 @@ def get_solution_iter(problem_name):
     return get_result(len(problem_data['element_values']), problem_data['max_weight'])
 
 
-
 # print get_solution_recursive('basic.yml')
 # print get_solution_recursive('random_dataset.yml')
-
-print get_solution_iter('basic.yml')
+print get_solution_iter('random_dataset.yml')

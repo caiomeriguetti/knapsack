@@ -1,0 +1,11 @@
+max_weight: 7
+element_weights:
+  - 2
+  - 1
+  - 6
+  - 5
+element_values:
+  - 10
+  - 7
+  - 25
+  - 24
