@@ -1,9 +1,9 @@
-max_weight: 20
+max_weight: 5
 element_weights:
-  - 10
-  - 10
-  - 20
+  - 2
+  - 3
+  - 1
 element_values:
+  - 10
   - 15
-  - 20
-  - 30
+  - 10
