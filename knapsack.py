@@ -70,37 +70,40 @@ def get_solution_recursive(problem_name):
 
 def get_solution_iter(problem_name):
 
+    print "Carregando dados"
+
     problem_data = load_data(problem_name)
 
     max_weight = problem_data['max_weight']
 
-    table = {}
+    w, h = max_weight + 1, len(problem_data['element_values']) + 1
 
-    solution_track = {}
+    table = [[0 for x in range(w)] for y in range(h)]
+    solution_track = [[0 for x in range(w)] for y in range(h)]
 
     def get_result(el_num, weight):
 
-        key = (el_num, weight)
+        return table[el_num][weight]
 
-        return table[key]
+    print "Calculando tabela"
 
     for weight in range(0, max_weight + 1):
 
         for element_num in range(0, len(problem_data['element_values']) + 1):
 
-            table_key = (element_num, weight)
-
             if element_num == 0 or weight == 0:
-                table[table_key] = 0
+                table[element_num][weight] = 0
                 continue
 
             element_weight = problem_data['element_weights'][element_num - 1]
             element_value = problem_data['element_values'][element_num - 1]
 
             if element_weight > weight:
+
                 # nao cabe na mochila
-                table[table_key] = get_result(element_num - 1, weight)
-                solution_track[table_key] = (element_num - 1, weight)
+
+                table[element_num][weight] = get_result(element_num - 1, weight)
+                solution_track[element_num][weight] = (element_num - 1, weight)
             else:
 
                 # cabe na mochila
@@ -113,30 +116,31 @@ def get_solution_iter(problem_name):
                 else:
                     w_track = weight
 
-                table[table_key] = max(v1, v2)
+                table[element_num][weight] = max(v1, v2)
 
-                solution_track[table_key] = (element_num - 1, w_track)
-
-    current_key = (len(problem_data['element_values']), problem_data['max_weight'])
+                solution_track[element_num][weight] = (element_num - 1, w_track)
 
     # find elements
 
+    print "Calculando composicao da solucao"
+
+    current_key = (len(problem_data['element_values']), problem_data['max_weight'])
+
     solution_elements = []
+
     while 1:
 
         current_weight = current_key[1]
         current_element = current_key[0]
-        try:
-            current_key = solution_track[current_key]
-        except KeyError:
-            break
 
-        if current_key[1] < current_weight:
-            solution_elements.append(current_element)
+        try:
+            current_key = solution_track[current_element][current_weight]
+
+            if current_key[1] < current_weight:
+                solution_elements.append(current_element)
+
+        except:
+            break
 
     return solution_elements, get_result(len(problem_data['element_values']), problem_data['max_weight'])
 
-
-# print get_solution_recursive('basic.yml')
-# print get_solution_recursive('random_dataset.yml')
-print get_solution_iter('example1.yml')
