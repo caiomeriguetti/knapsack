@@ -16,8 +16,6 @@ def get_sub_solution_recursive(data, start_point, max_weight, recorded_solutions
     try:
         already_calculated_solution = recorded_solutions[solution_key]
 
-        print 'Reusing calculation', solution_key
-
         return already_calculated_solution
     except KeyError:
         pass
@@ -91,34 +89,38 @@ def get_solution_iter(problem_name):
 
         for element_num in range(0, len(problem_data['element_values']) + 1):
 
-            if element_num == 0 or weight == 0:
-                table[element_num][weight] = 0
+            # f(i, 0) = f(0, i) = 0
+            if element_num == 0 or weight == 0: # (n + 1) * (P + 1)
+                table[element_num][weight] = 0 # n + P - 1
                 continue
 
-            element_weight = problem_data['element_weights'][element_num - 1]
-            element_value = problem_data['element_values'][element_num - 1]
+            element_weight = problem_data['element_weights'][element_num - 1] # n * P
+            element_value = problem_data['element_values'][element_num - 1] # n * P
 
-            if element_weight > weight:
+            if element_weight > weight: # n * P
+                # melhor caso ninguem cabe
 
                 # nao cabe na mochila
 
-                table[element_num][weight] = get_result(element_num - 1, weight)
-                solution_track[element_num][weight] = (element_num - 1, weight)
+                table[element_num][weight] = get_result(element_num - 1, weight) # n * P
+                solution_track[element_num][weight] = (element_num - 1, weight) # n * P
             else:
+                # pior caso todos cabem
 
                 # cabe na mochila
 
-                v1 = get_result(element_num - 1, weight - element_weight) + element_value
-                v2 = get_result(element_num - 1, weight)
+                v1 = get_result(element_num - 1, weight - element_weight) + element_value # n * P
+                v2 = get_result(element_num - 1, weight) # n * P
 
+                # custo do if : n * P
                 if v1 >= v2:
                     w_track = weight - element_weight
                 else:
                     w_track = weight
 
-                table[element_num][weight] = max(v1, v2)
+                table[element_num][weight] = max(v1, v2) # (n * P ) * custom(max)
 
-                solution_track[element_num][weight] = (element_num - 1, w_track)
+                solution_track[element_num][weight] = (element_num - 1, w_track) # n * P
 
     # find elements
 
